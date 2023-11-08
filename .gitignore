@@ -1,2 +1,7 @@
 .vs/
 exportacao_*.csv
+sh2_descriptions.json
+sh4_descriptions.json
+economic_block.json
+fixed_export.csv
+fixed_export_cities_consolidated.csv
