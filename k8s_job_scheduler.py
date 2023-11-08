@@ -1,6 +1,7 @@
 import logging
 import argparse
 import uuid
+import datetime
 
 from kubernetes import client
 from kubernetes import config
@@ -77,9 +78,11 @@ class Kubernetes:
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("Task Executor")
-    parser.add_argument("input_string", help="Input String", type=str)
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser("Job Scheduler")
+    parser.add_argument("Input From Date", help="The date which it should be from, yyyy-mm", type=datetime)
+    argsFromDate = parser.parse_args()
+    parser.add_argument("Input To Date", help="The date which it should be to, yyyy-mm", type=datetime)
+    argsToDate = parser.parse_args()
 
     job_id = uuid.uuid4()
     pod_id = job_id
@@ -88,8 +91,6 @@ if __name__ == "__main__":
 
     # Kubernetes instance
     k8s = Kubernetes()
-
-    args_loaded_in = "test"
 
     job = '''
 ---
@@ -104,7 +105,7 @@ spec:
   mode: cluster
   mainApplicationFile: ./spark_job.py
   args:
-    - "{}"
+    - "{} {}"
   deps:
     requirements:
       - tabulate==0.8.9
@@ -125,7 +126,7 @@ spec:
     volumeMounts:
       - name: job-deps
         mountPath: /dependencies
-    '''.format(args_loaded_in)
+    '''.format(argsFromDate, argsToDate)
 
     print(job)
     # # STEP1: CREATE A CONTAINER
