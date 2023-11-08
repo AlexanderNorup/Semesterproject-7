@@ -1,11 +1,9 @@
 #install.packages(c("readr", "dplyr"))
 library(readr)
 library(dplyr)
-# Change "archive/southeast" to relevant filename
 data <- read_csv("archive/southeast.csv")
-data <- data %>% filter(Data >= "2010-01-01")
-names(data)
-data <- data %>%
+data <- data %>% 
+  filter(Data >= "2010-01-01") %>%
   rename(
     date = Data,
     time = Hora,
@@ -26,6 +24,7 @@ data <- data %>%
     "wind direction (radius degrees)" = "VENTO, DIREÇÃO HORARIA (gr) (° (gr))",
     "wind gust (m/s)" = "VENTO, RAJADA MAXIMA (m/s)",
     "wind speed (m/s)" = "VENTO, VELOCIDADE HORARIA (m/s)",
-  )
-# Change "archive/southeast" to relevant filename
+  ) %>%
+  arrange(date, time, station_code)
+
 write_csv(data, "updated_archive/southeast.csv")
