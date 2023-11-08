@@ -79,10 +79,9 @@ class Kubernetes:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Job Scheduler")
-    parser.add_argument("Input From Date", help="The date which it should be from, yyyy-mm", type=datetime)
-    argsFromDate = parser.parse_args()
-    parser.add_argument("Input To Date", help="The date which it should be to, yyyy-mm", type=datetime)
-    argsToDate = parser.parse_args()
+    parser.add_argument("fromDate", help="The date which it should be from, yyyy-mm", type=str)
+    parser.add_argument("toDate", help="The date which it should be to, yyyy-mm", type=str)
+    args = parser.parse_args()
 
     job_id = uuid.uuid4()
     pod_id = job_id
@@ -126,7 +125,7 @@ spec:
     volumeMounts:
       - name: job-deps
         mountPath: /dependencies
-    '''.format(argsFromDate, argsToDate)
+    '''.format(args.fromDate, args.toDate)
 
     print(job)
     # # STEP1: CREATE A CONTAINER
