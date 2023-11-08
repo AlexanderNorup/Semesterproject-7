@@ -1,3 +1,5 @@
+import sys
+import os
 import pandas as pd
 from datetime import datetime, timedelta
 from kafka import KafkaProducer
@@ -10,7 +12,19 @@ def main():
   producer = KafkaProducer(bootstrap_servers=[KAFKA_BROKERS])
   topic = "weather_data"
 
-  file = 'north.csv'
+  file = os.getenv("WEATHERFILE")
+
+  if file == None:
+    if(len(sys.argv) < 2):
+      raise RuntimeError("You must specify which file to load")
+
+    file = sys.argv[1]
+
+    if not os.path.isfile(file):
+      raise FileNotFoundError(f"File '{file}' not found you dork!")
+
+  print("Using file: " + file)
+
   chunksize = 1000
   # 1 second run time = 1 hour weather time
   time_scale = 60 * 60 
@@ -23,9 +37,11 @@ def main():
       for index, row in chunk.iterrows():
         while row['datetime'] - data_start_time > (datetime.now() - program_start_time) * time_scale:
           continue
+        keyStr = str(row["station_code"]) + "-" + str(row["datetime"]) #The key will be something like 324-2023-08-11T12:12:12Z
         row_without_datetime = row.drop('datetime')
         payload = bytes(row_without_datetime.to_json(), 'utf-8')
-        producer.send(topic, payload)
+        key = bytes(keyStr, 'utf-8')
+        producer.send(topic, payload, key=key)
         #print(payload)
 
 if __name__ == "__main__":

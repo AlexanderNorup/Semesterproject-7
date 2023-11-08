@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: north-importer
+spec:
+  template:
+    spec:
+      containers:
+      - name: north-importer
+        image: registry.gitlab.sdu.dk/alnoe20/docker-images/data_importer:north 
+        imagePullPolicy: "Always"
+      restartPolicy: Never
