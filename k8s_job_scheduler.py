@@ -1,7 +1,7 @@
 import logging
 import argparse
 import uuid
-import datetime
+from datetime import datetime
 
 from kubernetes import client
 from kubernetes import config
