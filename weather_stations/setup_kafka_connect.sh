@@ -9,8 +9,8 @@ http://127.0.0.1:8083/connectors \
     "config": {
         "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
         "tasks.max": "2",
-        "topics": "weather-data",
-        "hdfs.url": "hdfs://simple-hdfs-namenode-default-0:8020",
+        "topics": "weather_data",
+        "hdfs.url": "hdfs://simple-hdfs-namenode-default-1:8020",
         "flush.size": "10000",
         "format.class": "io.confluent.connect.hdfs.avro.AvroFormat",
         "key.converter.schemas.enable":"false",
@@ -18,6 +18,8 @@ http://127.0.0.1:8083/connectors \
         "key.converter.schema.registry.url": "http://kafka-schema-registry.kafka:8081", 
         "value.converter.schemas.enable":"false",
         "value.converter.schema.registry.url": "http://kafka-schema-registry.kafka:8081", 
-        "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "transforms": "InsertSchema",
+        "transforms.InsertSchema.type": "dk.sdu.mmmi.softwareengineering.InsertSchema"
     }
 }'
