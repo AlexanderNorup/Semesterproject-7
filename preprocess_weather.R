@@ -18,7 +18,7 @@ data <- data %>%
     "min temperature past hour (C)" = "TEMPERATURA MÍNIMA NA HORA ANT. (AUT) (°C)",
     "max dew point temperature past hour (C)" = "TEMPERATURA ORVALHO MAX. NA HORA ANT. (AUT) (°C)",
     "min dew point temperature past hour (C)" = "TEMPERATURA ORVALHO MIN. NA HORA ANT. (AUT) (°C)",
-    "max relative humid temperature past hour  (%)" = "UMIDADE REL. MAX. NA HORA ANT. (AUT) (%)",
+    "max relative humid temperature past hour (%)" = "UMIDADE REL. MAX. NA HORA ANT. (AUT) (%)",
     "min relative humid temperature past hour (%)" = "UMIDADE REL. MIN. NA HORA ANT. (AUT) (%)",
     "relative humid (% instant)" = "UMIDADE RELATIVA DO AR, HORARIA (%)",
     "wind direction (radius degrees)" = "VENTO, DIREÇÃO HORARIA (gr) (° (gr))",
