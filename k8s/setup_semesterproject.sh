@@ -54,3 +54,18 @@ microk8s kubectl apply -f mongodb.yaml -n semesterproject
 
 # If you want to watch all pods, do 
 # watch microk8s kubectl get pods --all-namespaces
+
+## Spark 
+# In order to supply code to spark applications you have two options (at least when using the Stackable operator through K8S):
+# - Referencing an S3 server
+# - Referencing a local file inside the application-image
+# The issue is that referencing the local filesystem means you have to re-build the docker-image if you want to change the application, and supply the application data as arguments
+# The other issue of referencing only the local filesystem is that the spark-logs are esssentially lost.
+# Thus, we decided to go with an S3 setup. For this, we use the open-source system "minio"
+# Install using the default username "admin" and password "password". Also create a bucket for the spark-logs
+microk8s helm install minio oci://registry-1.docker.io/bitnamicharts/minio --set service.type=NodePort --set defaultBuckets=spark-logs --set auth.rootUser=admin --set auth.rootPassword=password -n semesterproject
+# Setup secrets for Spark to reference
+microk8s kubectl apply -f spark-s3-secrets.yaml -n semesterproject
+# Setup a spark history server, pointing to our new bucket. Uses for visualizing the logs (optional)
+microk8s kubectl apply -f spark-history-server.yaml -n semesterproject
+
