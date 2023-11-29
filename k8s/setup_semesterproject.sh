@@ -9,7 +9,7 @@ microk8s kubectl create namespace stackable
 # Install stackable operators into stackable namespace
 #Common
 microk8s helm install --wait commons-operator stackable-stable/commons-operator --version 23.7.0 -n stackable
-microk8s helm install --wait secret-operator stackable-stable/secret-operator --version 23.7.0 -n stackable
+microk8s helm install --wait --set kubeletDir=/var/snap/microk8s/common/var/lib/kubelet secret-operator stackable-stable/secret-operator --version 23.7.0 -n stackable
 # HDFS
 microk8s helm install --wait zookeeper-operator stackable-stable/zookeeper-operator --version 23.7.0 -n stackable
 microk8s helm install --wait hdfs-operator stackable-stable/hdfs-operator --version 23.7.0 -n stackable
