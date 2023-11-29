@@ -71,7 +71,7 @@ public class InsertSchema<R extends ConnectRecord<R>> implements Transformation<
         String time = updatedValue.getString("time");
         if(date != null && time != null) {
             Instant dateObj = Instant.parse(date + "T" + time + "Z"); // Zulu time
-            timestamp = dateObj.getEpochSecond() / 1000L; // Gets Unix millis
+            timestamp = dateObj.getEpochSecond() * 1000L; // Gets Unix millis
         }
         updatedValue.put("timestamp", timestamp);
 
