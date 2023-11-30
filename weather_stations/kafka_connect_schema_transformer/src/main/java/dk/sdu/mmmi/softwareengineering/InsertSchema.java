@@ -8,6 +8,10 @@ import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.transforms.Transformation;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalField;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +64,16 @@ public class InsertSchema<R extends ConnectRecord<R>> implements Transformation<
                 updatedValue.put(newName, val);
             }
         }
+
+        // Insert new Timestamp schema
+        long timestamp = 0L;
+        String date = updatedValue.getString("date");
+        String time = updatedValue.getString("time");
+        if(date != null && time != null) {
+            Instant dateObj = Instant.parse(date + "T" + time + "Z"); // Zulu time
+            timestamp = dateObj.getEpochSecond() * 1000L; // Gets Unix millis
+        }
+        updatedValue.put("timestamp", timestamp);
 
         return newRecord(record, updatedSchema, updatedValue);
     }
@@ -178,6 +192,9 @@ public class InsertSchema<R extends ConnectRecord<R>> implements Transformation<
         for(Field f : oldSchema.fields()){
             builder.field(convertName(f.name()), f.schema());
         }
+
+        // New fields in the new Schema
+        builder.field("timestamp", Schema.INT64_SCHEMA);
 
         return builder.build();
     }
