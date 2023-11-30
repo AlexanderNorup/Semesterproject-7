@@ -1,0 +1,18 @@
+apiVersion: v1
+clusters:
+  - cluster:
+      certificate-authority-data: <INSERT TOKEN HERE>
+      server: https://bds-g14-n0.uvm.sdu.dk:16443
+    name: microk8s-cluster
+contexts:
+  - context:
+      cluster: microk8s-cluster
+      user: admin
+    name: microk8s
+current-context: microk8s
+kind: Config
+preferences: {}
+users:
+  - name: admin
+    user:
+      token: <INSERT TOKEN HERE>

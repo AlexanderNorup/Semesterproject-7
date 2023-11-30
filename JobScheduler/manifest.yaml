@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-scheduler
+  namespace: semesterproject
+  labels:
+    app: quotes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-scheduler
+  template:
+    metadata:
+      labels:
+        app: job-scheduler
+    spec:
+      containers:
+        - name: job-scheduler
+          image: registry.gitlab.sdu.dk/alnoe20/docker-images/job-scheduler:v2
+          imagePullPolicy: "Always"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "job-scheduler-flask"
+spec:
+  type: "NodePort"
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: "job-scheduler"
+---
+
