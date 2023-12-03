@@ -14,8 +14,11 @@ def login_post():
         from_date = request.form['from_date']
         to_date = request.form['to_date']
         if name != None and from_date != None and to_date != None:
-            k8s_job_scheduler.schedule_job(name, from_date, to_date)
-            return "<p>Posted new job!</p>"
+            success = k8s_job_scheduler.schedule_job(name, from_date, to_date)
+            if success:
+                return "<p>Posted new job!</p>"
+            else:
+                return "<p>Failed to create job. So sad.</p>"
         else:
             return "<p>Wrong input. Need: Name, From Date &amp; To Date</p>"
     else:

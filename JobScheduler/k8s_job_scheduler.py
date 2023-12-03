@@ -36,7 +36,7 @@ spec:
       memory:
         limit: "1Gi"
   executor:
-    instances: 3
+    instances: 2
     resources:
       cpu:
         min: "1"
@@ -45,12 +45,16 @@ spec:
         limit: "1Gi"
   sparkConf:
     spark.executor.extraClassPath: "/dependencies/jars/hadoop-aws-3.2.0.jar:/dependencies/jars/aws-java-sdk-bundle-1.11.375.jar"
+  deps:
+    packages:
+      - org.apache.spark:spark-avro_2.12:3.5.0
     '''.format(name, fromDate, toDate)
 
     with open('spark_app.yaml', 'w') as file:
         file.write(yaml_file)
 
-    os.system("kubectl apply -f spark_app.yaml --insecure-skip-tls-verify -n=semesterproject")
+    statusCode = os.system("kubectl apply -f spark_app.yaml --insecure-skip-tls-verify -n=semesterproject")
+    return statusCode == 0
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Job Scheduler")
