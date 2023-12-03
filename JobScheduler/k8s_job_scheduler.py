@@ -37,7 +37,7 @@ spec:
       memory:
         limit: "1Gi"
   executor:
-    instances: 2
+    instances: 1
     resources:
       cpu:
         min: "1"
