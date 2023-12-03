@@ -1,5 +1,6 @@
 import argparse
 import os
+import requests
 
 def schedule_job(name, fromDate, toDate):
     yaml_file = '''
@@ -47,8 +48,23 @@ spec:
     spark.executor.extraClassPath: "/dependencies/jars/hadoop-aws-3.2.0.jar:/dependencies/jars/aws-java-sdk-bundle-1.11.375.jar"
   deps:
     packages:
-      - org.apache.spark:spark-avro_2.12:3.5.0
-    '''.format(name, fromDate, toDate)
+      - org.apache.spark:spark-avro_2.12:3.3.0
+    '''
+
+    templateURL = "http://minio:9000/spark-apps/template.yaml"
+
+    try:
+      updatedTemplate = requests.get(templateURL)
+      if updatedTemplate.status_code == 200:
+        yaml_file = updatedTemplate.text
+        print("Fetched updated YAML file from " + templateURL)
+      else:
+        print("Using hardcoded fallback YAML file because the GET request to " + templateURL + ", returned status " + str(updatedTemplate.status_code) + ", with response:\n---\n" + updatedTemplate.text + "\n---")
+    except Exception as e:
+      print("Could not reach Minio for updated YAML file. Using hardcoded fallback. Error: " + str(e))
+
+    # Insert the fields into the template
+    yaml_file = yaml_file.format(name, fromDate, toDate)
 
     with open('spark_app.yaml', 'w') as file:
         file.write(yaml_file)
