@@ -1,19 +1,22 @@
 package dk.sdu.mmmi.softwareengineering;
 
-import org.apache.spark.api.java.JavaRDD;
+//import org.apache.kafka.clients.producer.KafkaProducer;
+//import org.apache.kafka.clients.producer.ProducerRecord;
+//import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
+//import java.util.Properties;
+//import java.util.concurrent.ExecutionException;
 
 public class SparkDataCollector {
     private static final String HDFS_URL = "hdfs://simple-hdfs-namenode-default-1.simple-hdfs-namenode-default:8020";
     private static final String HDFS_PATH = "/topics/weather_data/";
+    private static final String HDFS_OUTPUT_PATH = "/processed_weather_data/";
     private static final int NUMBER_OF_PARTITONS = 3;
     private static final int SPARK_CONCURRENCY = 2;
     private static final String KAFKA_TOPIC = "processed_weather_data";
@@ -65,23 +68,34 @@ public class SparkDataCollector {
             );
             System.out.println("Filtered some AVRO rows");
 
-            Dataset<Row> selectedData = rows.select("solarRadiation", "airTemperature", "windDirection");
+            Dataset<Row> selectedData = rows.select("timestamp", "solarRadiation", "airTemperature", "windDirection");
             System.out.println("Selected some data");
 
             // List<String> jsonObjects = selectedData.toJSON().collectAsList();
             // Converted to JSON list
-            try {
-                System.out.println("Trying to push to kafka");
-                selectedData.toJSON()
-                        .writeStream()
-                        .format("kafka")
-                        .option("kafka.bootstrap.servers", String.join(",", KAFKA_CLUSTERS))
-                        .option("topic", KAFKA_TOPIC)
-                        .start();
-                System.out.println("After kafka push");
-            } catch (TimeoutException e) {
-                throw new RuntimeException("Failed to write to Kafka", e);
-            }
+            System.out.println("Trying to push to kafka");
+
+            // What we should be able to do is just use the following code:
+//            selectedData.toJSON()
+//                    .write()
+//                    .format("kafka")
+//                    .option("kafka.bootstrap.servers", String.join(",", KAFKA_CLUSTERS))
+//                    .option("topic", KAFKA_TOPIC)
+//                    .save();
+            // The problem is that this code only works if you make spark include the package "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0"
+            // The problem with that is that the dependencies of "spark-sql-kafka-0-10_2.12" include a conflict with the core spark package, which means:
+            //  --> "java.lang.LinkageError: loader constraint violation: when resolving method 'org.slf4j.ILoggerFactory"
+            // So instead of trying to fix that, we recognize that we could do as above, but instead we put the data back in HDFS,
+            //  and have setup a kafka-connect job to put the data in kafka.
+
+            String fileKey = String.format("%d-%d.json", fromTimestamp, toTimestamp);
+
+            selectedData.toJSON()
+                    .write()
+                    .mode(SaveMode.Ignore)
+                    .json(HDFS_URL + HDFS_OUTPUT_PATH + fileKey);
+
+            System.out.println("Wrote output-JSON to HDFS");
 
             // Parallelize with the command below:
             // JavaRDD<Row> dataSet = jsc.parallelize(selectedData.collectAsList(), SPARK_CONCURRENCY);
