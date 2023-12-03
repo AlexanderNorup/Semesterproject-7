@@ -11,7 +11,7 @@ metadata:
   name: spark-data-collector-{}
 spec:
   version: "1.0"
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.0.0-dev
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.5.0-stackable0.0.0-dev
   mode: cluster
   mainApplicationFile: s3a://spark-apps/SparkDataCollector-1.0-SNAPSHOT.jar
   mainClass: dk.sdu.mmmi.softwareengineering.SparkDataCollector
@@ -47,8 +47,8 @@ spec:
   sparkConf:
     spark.executor.extraClassPath: "/dependencies/jars/hadoop-aws-3.2.0.jar:/dependencies/jars/aws-java-sdk-bundle-1.11.375.jar"
   deps:
-    packages:
-      - org.apache.spark:spark-avro_2.12:3.3.0
+    packages: 
+      - org.apache.spark:spark-avro_2.12:3.5.0
     '''
 
     templateURL = "http://minio:9000/spark-apps/template.yaml"
