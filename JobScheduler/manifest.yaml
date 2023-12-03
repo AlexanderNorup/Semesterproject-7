@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: job-scheduler
-          image: registry.gitlab.sdu.dk/alnoe20/docker-images/job-scheduler:v2
+          image: registry.gitlab.sdu.dk/alnoe20/docker-images/job-scheduler:v3
           imagePullPolicy: "Always"
 ---
 apiVersion: "v1"
