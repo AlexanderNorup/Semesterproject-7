@@ -1,11 +1,21 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import k8s_job_scheduler
+import hadoop_data_fetcher
 
 app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+@app.route("/processed")
+def listProcessedData():
+    return Response(hadoop_data_fetcher.list_ids(), mimetype="application/json")
+    
+@app.route("/processed/<id>")
+def getProcessedData(id):
+    print("Fetching processed data for id: " + id)
+    return Response(hadoop_data_fetcher.fetch_from_hadoop(id), mimetype="application/json")
 
 @app.post('/job')
 def login_post():

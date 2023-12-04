@@ -5,6 +5,8 @@ COPY config root/.kube/
 
 COPY jobscheduler.py .
 COPY k8s_job_scheduler.py .
+COPY hdfs_client.py .
+COPY hadoop_data_fetcher.py .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
