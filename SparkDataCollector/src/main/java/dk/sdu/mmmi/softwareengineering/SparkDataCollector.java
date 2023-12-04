@@ -72,23 +72,30 @@ public class SparkDataCollector {
             Dataset<Row> selectedData = filtered.select("timestamp", "solarRadiation", "airTemperature", "windDirection");
             System.out.println("Selected some rows");
 
-            System.out.println("Trying to collect as a list and output the data");
-
-            List<String> jsonData = selectedData.toJSON().collectAsList();
-            System.out.println("Selected data:" +  String.join("|", jsonData));
-
-//            String fileKey = String.format("%d-%d.json", fromTimestamp, toTimestamp);
+//            System.out.println("Trying to collect as a list and output the data");
 //
+//            List<String> jsonData = selectedData.toJSON().collectAsList();
+//            System.out.println("Selected data:" +  String.join("|", jsonData));
+
+//            System.out.println("Attempting output to Kafka");
 //            selectedData.toJSON()
 //                    .write()
-//                    .mode(SaveMode.Ignore)
-//                    .json(HDFS_URL + HDFS_OUTPUT_PATH + fileKey);
+//                    .format("kafka")
+//                    .option("kafka.bootstrap.servers", String.join(",", KAFKA_CLUSTERS))
+//                    .option("topic", KAFKA_TOPIC)
+//                    .save();
 //
-//            System.out.println("Wrote output-JSON to HDFS");
+//            System.out.println("Output to kafka complete!");
 
+            String fileKey = String.format("%d-%d.json", fromTimestamp, toTimestamp);
 
+            selectedData
+                    .write()
+                    .mode(SaveMode.Overwrite)
+                    .json(HDFS_URL + HDFS_OUTPUT_PATH + fileKey);
+
+            System.out.println("Wrote output-JSON to HDFS");
         }
-
 
         // What we should be able to do is just use the following code:
 //            selectedData.toJSON()
