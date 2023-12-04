@@ -1,18 +1,18 @@
 package dk.sdu.mmmi.softwareengineering;
 
-//import org.apache.kafka.clients.producer.KafkaProducer;
-//import org.apache.kafka.clients.producer.ProducerRecord;
-//import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.api.java.function.FilterFunction;
+import org.apache.spark.sql.*;
 
 import java.time.Instant;
-import java.util.List;
-//import java.util.Properties;
-//import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static dk.sdu.mmmi.softwareengineering.SchemaShape.*;
+
+import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.functions;
+import org.apache.spark.sql.types.DataTypes;
 
 public class SparkDataCollector {
     private static final String HDFS_URL = "hdfs://simple-hdfs-namenode-default-1.simple-hdfs-namenode-default:8020";
@@ -22,7 +22,7 @@ public class SparkDataCollector {
     private static final int SPARK_CONCURRENCY = 2;
     private static final String KAFKA_TOPIC = "processed_weather_data";
     private static final String[] KAFKA_CLUSTERS = new String[]{
-        "strimzi-kafka-bootstrap.semesterproject:9092"
+            "strimzi-kafka-bootstrap.semesterproject:9092"
     };
 
     public static void main(String[] args) {
@@ -53,6 +53,9 @@ public class SparkDataCollector {
 
         System.out.println("Started a spark session");
 
+        //Register custom UserDefinedFunction UDF
+        spark.udf().register(AvgOfTwoColumns.class.getName(), new AvgOfTwoColumns(), DataTypes.DoubleType);
+
         String[] paths = new String[NUMBER_OF_PARTITONS];
         for (int i = 0; i < paths.length; i++) {
             paths[i] = HDFS_URL + HDFS_PATH + "partition=" + i;
@@ -65,70 +68,82 @@ public class SparkDataCollector {
                     .load(paths);
             System.out.println("Loaded some AVRO rows");
             Dataset<Row> filtered = rows.where(
-                    "timestamp > " + fromTimestamp + " AND timestamp < " + toTimestamp
+                    timestamp.fieldName() + " > " + fromTimestamp + " AND " + timestamp.fieldName() + " < " + toTimestamp
             );
-            System.out.println("Filtered some AVRO rows");
 
-            Dataset<Row> selectedData = filtered.select("timestamp", "solarRadiation", "airTemperature", "windDirection");
-            System.out.println("Selected some rows");
+            Dataset<Row> selectedData = filtered.select(
+                    timestamp.fieldName(),
+                    date.fieldName(),
+                    state.fieldName(),
+                    precipitationPastHour.fieldName(),
+                    relativeHumid.fieldName(),
+                    airTemperature.fieldName(),
+                    maxAirPressurePastHour.fieldName(),
+                    minAirPressurePastHour.fieldName(),
+                    windDirection.fieldName(),
+                    solarRadiation.fieldName(),
+                    windGust.fieldName(),
+                    windSpeed.fieldName()
+            );
+            System.out.println("Selected relevant rows");
+            final String generatedAirPressureField = "AirPressure";
+            Dataset<Row> dataWithGeneratedAirPressure = selectedData.withColumn(generatedAirPressureField, functions.callUDF(
+                    AvgOfTwoColumns.class.getName(),
+                    onlyValidEntries(minAirPressurePastHour),
+                    onlyValidEntries(maxAirPressurePastHour))
+            );
 
-//            System.out.println("Trying to collect as a list and output the data");
-//
-//            List<String> jsonData = selectedData.toJSON().collectAsList();
-//            System.out.println("Selected data:" +  String.join("|", jsonData));
+            System.out.println("Generated field " + generatedAirPressureField);
 
-//            System.out.println("Attempting output to Kafka");
-//            selectedData.toJSON()
-//                    .write()
-//                    .format("kafka")
-//                    .option("kafka.bootstrap.servers", String.join(",", KAFKA_CLUSTERS))
-//                    .option("topic", KAFKA_TOPIC)
-//                    .save();
-//
-//            System.out.println("Output to kafka complete!");
+            RelationalGroupedDataset groupedData = dataWithGeneratedAirPressure.groupBy(state.fieldName());
 
-            String fileKey = String.format("%d-%d.json", fromTimestamp, toTimestamp);
+            System.out.println("Created a grouped dataset by " + state.fieldName());
 
-            selectedData
+            Dataset<Row> aggregatedData = groupedData.agg(
+                    functions.mean(onlyValidEntries(precipitationPastHour)).as("AvgPrecipitation"),
+                    functions.mean(onlyValidEntries(relativeHumid)).as("AvgHumidity"),
+                    functions.max(onlyValidEntries(airTemperature)).as("MaxTemperature"),
+                    functions.min(onlyValidEntries(airTemperature)).as("MinTemperature"),
+                    functions.mean(onlyValidEntries(airTemperature)).as("AvgTemperature"),
+                    functions.mean(onlyValidEntries(generatedAirPressureField)).as("MaxAirPressure"),
+                    functions.min(onlyValidEntries(minAirPressurePastHour)).as("MinAirPressure"),
+                    functions.max(onlyValidEntries(maxAirPressurePastHour)).as("AvgAirPressure"),
+                    functions.median(onlyValidEntries(windDirection)).as("MedianWindDirection"),
+                    functions.mean(onlyValidEntries(solarRadiation)).as("AvgSolarRadiation"),
+                    functions.mean(onlyValidEntries(windGust)).as("AvgWindGust"),
+                    functions.mean(onlyValidEntries(windSpeed)).as("AvgWindSpeed")
+            );
+
+
+            final String fromDateField = "FromDate";
+            final String toDateField = "ToDate";
+            Map<String, Column> metadataMap = new HashMap<String, Column>() {{
+                put(fromDateField, functions.lit(fromStr));
+                put(toDateField, functions.lit(toStr));
+            }};
+
+            Dataset<Row> withAddedMetadata = aggregatedData.withColumns(metadataMap);
+            System.out.println("Added metadata to the dataset");
+
+            withAddedMetadata.show();
+
+            String fileKey = String.format("%d-%d", fromTimestamp, toTimestamp);
+
+            withAddedMetadata
                     .write()
                     .mode(SaveMode.Overwrite)
                     .json(HDFS_URL + HDFS_OUTPUT_PATH + fileKey);
 
             System.out.println("Wrote output-JSON to HDFS");
         }
+    }
 
-        // What we should be able to do is just use the following code:
-//            selectedData.toJSON()
-//                    .write()
-//                    .format("kafka")
-//                    .option("kafka.bootstrap.servers", String.join(",", KAFKA_CLUSTERS))
-//                    .option("topic", KAFKA_TOPIC)
-//                    .save();
-        // The problem is that this code only works if you make spark include the package "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0"
-        // The problem with that is that the dependencies of "spark-sql-kafka-0-10_2.12" include a conflict with the core spark package, which means:
-        //  --> "java.lang.LinkageError: loader constraint violation: when resolving method 'org.slf4j.ILoggerFactory"
-        // So instead of trying to fix that, we recognize that we could do as above, but instead we put the data back in HDFS,
-        //  and have setup a kafka-connect job to put the data in kafka.
+    private static Column onlyValidEntries(SchemaShape shape) {
+        return onlyValidEntries(shape.fieldName());
+    }
 
-        // Parallelize with the command below:
-        // JavaRDD<Row> dataSet = jsc.parallelize(selectedData.collectAsList(), SPARK_CONCURRENCY);
-
-//          EXAMPLE CODE from https://github.com/apache/spark/blob/master/examples/src/main/java/org/apache/spark/examples/JavaSparkPi.java
-//        int slices = (args.length == 1) ? Integer.parseInt(args[0]) : 2;
-//        int n = 100000 * slices;
-//        List<Integer> l = new ArrayList<>(n);
-//        for (int i = 0; i < n; i++) {
-//            l.add(i);
-//        }
-//
-//        JavaRDD<Integer> dataSet = jsc.parallelize(l, slices);
-//
-//        int count = dataSet.map(integer -> {
-//            double x = Math.random() * 2 - 1;
-//            double y = Math.random() * 2 - 1;
-//            return (x * x + y * y <= 1) ? 1 : 0;
-//        }).reduce((integer, integer2) -> integer + integer2);
-//
-//        System.out.println("Pi is roughly " + 4.0 * count / n);
+    private static Column onlyValidEntries(String fieldName) {
+        // This function filters entries less than or equal to -9999 away.
+        return functions.when(functions.col(fieldName).$greater(functions.lit(-9999d)), functions.col(fieldName));
     }
 }
