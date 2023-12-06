@@ -63,7 +63,7 @@ export const data = {
   datasets: [
     {
       type: "line" as const,
-      label: "Weather",
+      label: "Weather -> right axis",
       borderColor: "rgb(255, 99, 132)",
       borderWidth: 2,
       fill: false,
@@ -72,7 +72,7 @@ export const data = {
     },
     {
       type: "bar" as const,
-      label: "Income",
+      label: "Income -> left axis",
       backgroundColor: "rgb(75, 192, 192)",
       data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
       borderColor: "white",
@@ -81,7 +81,7 @@ export const data = {
     },
     {
       type: "bar" as const,
-      label: "Product",
+      label: "Product -> left axis",
       backgroundColor: "rgb(53, 162, 235)",
       data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
       yAxisID: "y",
