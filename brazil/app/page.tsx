@@ -1,5 +1,4 @@
 import ChartDemo from "@/components/ChartDemo";
-import ChartTable from "@/components/ChartTable";
 import { DataTableDemo } from "@/components/DataTableDemo";
 import Field from "@/components/Field";
 import MyChart from "@/components/MyChart";
@@ -18,7 +17,6 @@ export default function Home() {
         </h1>
         <div className="text-slate-500 m-4">
           <DataTableDemo />
-          <MyChart />
           <ChartDemo />
         </div>
       </div>

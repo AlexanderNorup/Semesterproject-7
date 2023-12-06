@@ -27,6 +27,24 @@ ChartJS.register(
   BarController
 );
 
+export const options = {
+  plugins: {
+    title: {
+      display: true,
+      text: "Chart.js Bar Chart - Stacked",
+    },
+  },
+  responsive: true,
+  scales: {
+    x: {
+      stacked: true,
+    },
+    y: {
+      stacked: true,
+    },
+  },
+};
+
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
 export const data = {
@@ -58,7 +76,7 @@ export const data = {
 };
 
 export function ChartDemo() {
-  return <Chart type="bar" data={data} />;
+  return <Chart options={options} type="bar" data={data} />;
 }
 
 export default ChartDemo;
