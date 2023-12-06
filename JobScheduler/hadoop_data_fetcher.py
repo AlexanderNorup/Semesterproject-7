@@ -18,7 +18,7 @@ def fetch_from_hadoop(id):
             model = load(reader)
             # Attempt to re-add state
             state = file.split("state=")[1][0:2] #Re-add state
-            model["state"] = state
+            model["State"] = state
             parsedContents.append(model)
 
     return dumps(parsedContents)
