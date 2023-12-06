@@ -7,8 +7,8 @@ import Offer from "@/components/Offer";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col gap-6 bg-primary pt-10">
-      <div>
-        <h1 className="text-sky-400 text-2xl text-center p-6">Search</h1>
+      <div className="flex flex-col gap-5 items-center justify-center">
+        <h1 className="text-sky-400 text-2xl text-center ">Search</h1>
         <Field />
       </div>
       <div>

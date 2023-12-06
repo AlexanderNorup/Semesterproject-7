@@ -5,11 +5,11 @@ import { Button } from "./ui/button";
 
 const SelectBar = () => {
   return (
-    <div className="grid grid-flow-col gap-2 items-center justify-center w-full">
+    <div className="grid grid-flow-col gap-2 items-center justify-center w-full m-4">
       <h2 className="text-white text-lg">From</h2>
       <SelectMonth />
       <SelectYear />
-      <h2 className="text-white text-lg">To</h2>
+      <h2 className="text-white text-lg ">To</h2>
       <SelectMonth />
       <SelectYear />
       <Button className="bg-sky-400 text-black text-md hover:bg-sky-600">
