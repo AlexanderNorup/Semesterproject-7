@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 
 const SelectBar = () => {
   return (
-    <div className="grid grid-flow-col gap-2 items-center justify-center w-full m-4">
+    <div className="grid grid-flow-col gap-2 items-center justify-center w-full mx-4">
       <h2 className="text-white text-lg">From</h2>
       <SelectMonth />
       <SelectYear />
