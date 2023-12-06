@@ -99,16 +99,15 @@ public class SparkDataCollector {
                     functions.max(onlyValidEntries(airTemperature)).as("MaxTemperature"),
                     functions.min(onlyValidEntries(airTemperature)).as("MinTemperature"),
                     functions.mean(onlyValidEntries(airTemperature)).as("AvgTemperature"),
-                    functions.mean(onlyValidEntries(generatedAirPressureField)).as("MaxAirPressure"),
+                    functions.mean(onlyValidEntries(generatedAirPressureField)).as("AvgAirPressure"),
                     functions.min(onlyValidEntries(minAirPressurePastHour)).as("MinAirPressure"),
-                    functions.max(onlyValidEntries(maxAirPressurePastHour)).as("AvgAirPressure"),
+                    functions.max(onlyValidEntries(maxAirPressurePastHour)).as("MaxAirPressure"),
                     functions.median(onlyValidEntries(windDirection)).as("MedianWindDirection"),
                     functions.mean(onlyValidEntries(solarRadiation)).as("AvgSolarRadiation"),
                     functions.mean(onlyValidEntries(windGust)).as("AvgWindGust"),
                     functions.mean(onlyValidEntries(windSpeed)).as("AvgWindSpeed")
             );
-
-
+            
             final String fromDateField = "FromDate";
             final String toDateField = "ToDate";
             Map<String, Column> metadataMap = new HashMap<String, Column>() {{
