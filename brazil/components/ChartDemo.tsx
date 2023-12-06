@@ -41,6 +41,17 @@ export const options = {
     },
     y: {
       stacked: true,
+      type: "linear" as const,
+      display: true,
+      position: "left" as const,
+    },
+    y1: {
+      type: "linear" as const,
+      display: true,
+      position: "right" as const,
+      grid: {
+        drawOnChartArea: false,
+      },
     },
   },
 };
@@ -56,7 +67,8 @@ export const data = {
       borderColor: "rgb(255, 99, 132)",
       borderWidth: 2,
       fill: false,
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      yAxisID: "y1",
     },
     {
       type: "bar" as const,
@@ -65,12 +77,14 @@ export const data = {
       data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
       borderColor: "white",
       borderWidth: 2,
+      yAxisID: "y",
     },
     {
       type: "bar" as const,
       label: "Product",
       backgroundColor: "rgb(53, 162, 235)",
       data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      yAxisID: "y",
     },
   ],
 };
