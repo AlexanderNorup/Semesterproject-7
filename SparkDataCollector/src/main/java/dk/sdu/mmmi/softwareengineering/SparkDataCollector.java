@@ -49,6 +49,8 @@ public class SparkDataCollector {
 
         //Register custom UserDefinedFunction UDF
         spark.udf().register(AvgOfTwoColumns.class.getName(), new AvgOfTwoColumns(), DataTypes.DoubleType);
+        spark.udf().register(MonthGrabber.class.getName(), new MonthGrabber(), DataTypes.StringType);
+        spark.udf().register(YearGrabber.class.getName(), new YearGrabber(), DataTypes.StringType);
 
         String[] paths = new String[NUMBER_OF_PARTITONS];
         for (int i = 0; i < paths.length; i++) {
@@ -89,9 +91,22 @@ public class SparkDataCollector {
 
             System.out.println("Generated field " + generatedAirPressureField);
 
-            RelationalGroupedDataset groupedData = dataWithGeneratedAirPressure.groupBy(state.fieldName());
+            // Find Year and Months columns.
+            final String monthField = "Month";
+            final String yearField = "Year";
 
-            System.out.println("Created a grouped dataset by " + state.fieldName());
+            Map<String, Column> monthYearColumns = new HashMap<String, Column>(){{
+                put(monthField, functions.callUDF(MonthGrabber.class.getName(), functions.col(date.fieldName())));
+                put(yearField, functions.callUDF(YearGrabber.class.getName(), functions.col(date.fieldName())));
+            }};
+
+            Dataset<Row> withMonthYearSplit = dataWithGeneratedAirPressure.withColumns(monthYearColumns);
+
+            System.out.println("Added year/month columns");
+
+            RelationalGroupedDataset groupedData = withMonthYearSplit.groupBy(functions.col(state.fieldName()), functions.col(yearField), functions.col(monthField));
+
+            System.out.printf("Created a grouped dataset by %s, %s and %s%n", state.fieldName(), yearField, monthField);
 
             Dataset<Row> aggregatedData = groupedData.agg(
                     functions.mean(onlyValidEntries(precipitationPastHour)).as("AvgPrecipitation"),

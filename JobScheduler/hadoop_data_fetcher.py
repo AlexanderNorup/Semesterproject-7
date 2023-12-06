@@ -1,5 +1,6 @@
 from hdfs_client import get_hdfs_client
-from json import load, dumps
+from json import loads, dumps
+import sys
 def fetch_from_hadoop(id):
     client = get_hdfs_client()
     
@@ -14,12 +15,19 @@ def fetch_from_hadoop(id):
             files.append(path + "/" + dir + "/" + file)
     
     for file in files:
-        with client.read(file) as reader:
-            model = load(reader)
-            # Attempt to re-add state
-            state = file.split("state=")[1][0:2] #Re-add state
-            model["State"] = state
-            parsedContents.append(model)
+        with client.read(file, encoding='utf-8', delimiter='\n') as reader:
+            for line in reader: #Each line of the file is it's own JSON ojbect
+                if line.strip() == "":
+                    continue
+
+                try:
+                    model = loads(line) 
+                    # Attempt to re-add state
+                    state = file.split("state=")[1][0:2] #Re-add state
+                    model["State"] = state
+                    parsedContents.append(model)
+                except Exception as e:
+                    print("Failed to parse line \"" + line + "\". Exception: " + str(e), file=sys.stderr)
 
     return dumps(parsedContents)
 
