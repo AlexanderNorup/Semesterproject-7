@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { createContext, useContext } from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -14,6 +14,11 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
+import {
+  selectBrazilstateState,
+  setBrazilstateState,
+} from "../lib/brazilstateSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 ChartJS.register(
   LinearScale,
@@ -58,7 +63,11 @@ export const options = {
 
 export function ChartDemo(props: any) {
   const data = props.data;
-  let stateToShow = props.state;
+
+  const brazilState = useSelector(selectBrazilstateState);
+  let stateToShow = brazilState;
+  //let stateToShow = props.state;
+  console.log(stateToShow);
 
   if (stateToShow == undefined) {
     stateToShow = data[0].State;
@@ -123,7 +132,7 @@ export function ChartDemo(props: any) {
       type: "bar" as const,
       label: "Income -> left axis",
       backgroundColor: "rgb(75, 192, 192)",
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
       borderColor: "white",
       borderWidth: 2,
       yAxisID: "y",
@@ -132,7 +141,7 @@ export function ChartDemo(props: any) {
       type: "bar" as const,
       label: "Product -> left axis",
       backgroundColor: "rgb(53, 162, 235)",
-      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
       yAxisID: "y",
     },
   ];
