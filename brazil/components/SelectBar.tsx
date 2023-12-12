@@ -1,8 +1,8 @@
 import React from "react";
 import { SelectMonth } from "./SelectMonth";
 import { SelectYear } from "./SelectYear";
-import { SelectState } from "./SelectState";
 import { Button } from "./ui/button";
+import SelectState from "./SelectState";
 
 const SelectBar = () => {
   return (
@@ -15,10 +15,6 @@ const SelectBar = () => {
       <SelectYear />
       <Button className="bg-sky-400 text-black text-md hover:bg-sky-600">
         Search
-      </Button>
-      <SelectState />
-      <Button className="bg-sky-400 text-black text-md hover:bg-sky-600">
-        Select State
       </Button>
     </div>
   );

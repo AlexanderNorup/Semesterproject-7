@@ -22,8 +22,8 @@ export default function Home() {
         </h1>
         <div className="text-slate-200 m-4">
           {/* <DataTableDemo /> */}
-          <ChartDemo data={data} />
           <Filter />
+          <ChartDemo data={data} />
         </div>
       </div>
     </div>
