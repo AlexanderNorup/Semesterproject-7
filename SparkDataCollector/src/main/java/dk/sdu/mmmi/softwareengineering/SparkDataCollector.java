@@ -35,6 +35,10 @@ public class SparkDataCollector {
             throw new IllegalArgumentException("Please use ISO8601 timestamps (e.g. 2023-11-29T13:37Z) for both argument 1 (" + fromStr + ") and argument 2 (" + toStr + ")", e);
         }
 
+        if(fromTimestamp > toTimestamp){
+            throw new IllegalArgumentException("From timestamp must be less than the to timestamp. From: (" + fromStr + ") and to: (" + toStr + ")");
+        }
+
         System.out.printf("Parsed timestamps as %s => %d, %s => %d %n", fromStr, fromTimestamp, toStr, toTimestamp);
 
         SparkSession spark = SparkSession
