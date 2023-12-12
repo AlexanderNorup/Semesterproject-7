@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  namespace: semesterproject
+  labels:
+    app: quotes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v1
+          imagePullPolicy: "Always"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "dashboard"
+spec:
+  type: "NodePort"
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: "dashboard"
+---
+
