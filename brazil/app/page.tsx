@@ -1,6 +1,7 @@
 import ChartDemo from "@/components/ChartDemo";
 import { DataTableDemo } from "@/components/DataTableDemo";
 import Field from "@/components/Field";
+import Filter from "@/components/Filter";
 import MyChart from "@/components/MyChart";
 import Offer from "@/components/Offer";
 
@@ -17,6 +18,7 @@ export default function Home() {
         </h1>
         <div className="text-slate-200 m-4">
           {/* <DataTableDemo /> */}
+          <Filter />
           <ChartDemo />
         </div>
       </div>
