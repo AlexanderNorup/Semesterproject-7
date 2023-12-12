@@ -11,13 +11,10 @@ import java.util.Map;
 import static dk.sdu.mmmi.softwareengineering.SchemaShape.*;
 
 public class SparkDataCollector {
-    private static final String HDFS_URL = "hdfs://simple-hdfs-namenode-default-1.simple-hdfs-namenode-default:8020";
+    private static final String HDFS_URL = "hdfs://simple-hdfs-namenode-default-0.simple-hdfs-namenode-default:8020";
     private static final String HDFS_PATH = "/topics/weather_data/";
     private static final String HDFS_OUTPUT_PATH = "/processed_weather_data/";
     private static final int NUMBER_OF_PARTITONS = 3;
-    private static final String S3_ENDPOINT = "http://minio:9000";
-    private static final String S3_URL = "s3a://minio:9000/spark-apps";
-    private static final String S3_OUTPUT_PATH = "/processed_weather_data_output";
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -143,7 +140,7 @@ public class SparkDataCollector {
                     .mode(SaveMode.Overwrite)
                     .json(HDFS_URL + HDFS_OUTPUT_PATH + fileKey);
 
-            System.out.println("Wrote output-JSON to S3: " + S3_URL + S3_OUTPUT_PATH + fileKey);
+            System.out.println("Wrote output-JSON to HDFS!");
         }
     }
 
