@@ -3,7 +3,7 @@ import SelectState from "./SelectState";
 import SelectDataSet from "./SelectDataSet";
 import { Button } from "./ui/button";
 
-const FilterBar = () => {
+export function FilterBar() {
   return (
     <div className="flex flex-col items-center justify-center h-full pb-7">
       <h2 className="text-2xl font-bold pb-4">Datasets</h2>
@@ -32,6 +32,4 @@ const FilterBar = () => {
       </div>
     </div>
   );
-};
-
-export default FilterBar;
+}

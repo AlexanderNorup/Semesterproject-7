@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -8,10 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAppDispatch, useAppSelector, useAppStore } from "@/lib/hooks";
+import {
+  selectBrazilstateState,
+  setBrazilstateState,
+} from "../lib/brazilstateSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SelectState = () => {
+  const dispatch = useAppDispatch();
+
   return (
-    <Select>
+    <Select onValueChange={(choice) => dispatch(setBrazilstateState(choice))}>
       <SelectTrigger className="w-[180px] text-black ">
         <SelectValue placeholder="Choose a state" />
       </SelectTrigger>
