@@ -12,10 +12,10 @@ import {
 const SelectState = () => {
   return (
     <Select>
-      <SelectTrigger className="w-[180px] text-black">
+      <SelectTrigger className="w-[180px] text-black ">
         <SelectValue placeholder="Choose a state" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="overflow-y-auto max-h-60">
         <SelectGroup>
           <SelectLabel>State</SelectLabel>
           <SelectItem value="AC">Acre - AC</SelectItem>

@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 
 const FilterBar = () => {
   return (
-    <div className="flex flex-col items-center justify-center pb-7">
+    <div className="flex flex-col items-center justify-center h-full pb-7">
       <h2 className="text-2xl font-bold pb-4">Datasets</h2>
       <div className="flex flex-row items-center justify-center gap-2">
         <SelectDataSet />
