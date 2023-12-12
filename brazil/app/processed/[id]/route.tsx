@@ -1,0 +1,9 @@
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const response = await fetch("http://localhost:5000/processed/" + params.id); // replace url with environment variable
+  const data = await response.json();
+
+  return Response.json({ data });
+}
