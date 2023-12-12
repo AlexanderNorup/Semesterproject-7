@@ -1,3 +1,15 @@
+/* Access with e.g.:
+  const response = await fetch("/job", {
+    method: "POST",
+     body: JSON.stringify({
+       from: "2011-01-01T00:00:00Z",
+       to: "2011-03-01T00:00:00Z",
+     }),
+    });
+    const status = await response.json();
+
+*/
+
 interface JobObject {
   from: string;
   to: string;
