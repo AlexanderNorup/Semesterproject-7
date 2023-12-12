@@ -19,6 +19,11 @@ spec:
         - name: dashboard
           image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v1
           imagePullPolicy: "Always"
+          env:
+            - name: PORT
+              value: "3000"
+            - name: NODE_ENVIRONMENT
+              value: "PRODUCTION"
 ---
 apiVersion: "v1"
 kind: "Service"

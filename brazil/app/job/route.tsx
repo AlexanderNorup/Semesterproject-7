@@ -14,7 +14,7 @@ interface JobObject {
   from: string;
   to: string;
 }
-
+export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const toSend: JobObject = await request.json();
 

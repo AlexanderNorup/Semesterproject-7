@@ -2,7 +2,7 @@
   const response = await fetch("/processed/" + "1266210000000-1268186400000");
   const data = await response.json();
 */
-
+export const dynamic = "force-dynamic";
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
