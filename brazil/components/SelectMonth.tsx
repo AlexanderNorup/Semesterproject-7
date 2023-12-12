@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function SelectMonth() {
+const SelectMonth = () => {
   return (
     <Select>
       <SelectTrigger className="w-[180px]">
@@ -35,4 +35,6 @@ export function SelectMonth() {
       </SelectContent>
     </Select>
   );
-}
+};
+
+export default SelectMonth;

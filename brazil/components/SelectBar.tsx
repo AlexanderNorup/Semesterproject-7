@@ -1,5 +1,5 @@
 import React from "react";
-import { SelectMonth } from "./SelectMonth";
+import SelectMonth from "./SelectMonth";
 import { SelectYear } from "./SelectYear";
 import { Button } from "./ui/button";
 import SelectState from "./SelectState";
