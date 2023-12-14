@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -14,11 +14,8 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
-import {
-  selectBrazilstateState,
-  setBrazilstateState,
-} from "../lib/brazilstateSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { selectBrazilstateState } from "../lib/brazilstateSlice";
+import { useSelector } from "react-redux";
 
 ChartJS.register(
   LinearScale,
@@ -63,11 +60,11 @@ export const options = {
 
 export function ChartDemo(props: any) {
   const data = props.data;
+  console.log(data);
 
   const brazilState = useSelector(selectBrazilstateState);
   let stateToShow = brazilState;
   //let stateToShow = props.state;
-  console.log(stateToShow);
 
   if (stateToShow == undefined) {
     stateToShow = data[0].State;

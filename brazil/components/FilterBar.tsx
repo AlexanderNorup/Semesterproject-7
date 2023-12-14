@@ -15,7 +15,6 @@ export function FilterBar({ setId }: FilterBarProps) {
   const fetchData = async () => {
     const response = await fetch("/processed");
     const data = await response.json();
-    console.log(data);
     setIds(data.data);
   };
 

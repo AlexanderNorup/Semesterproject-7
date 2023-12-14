@@ -14,7 +14,7 @@ export async function GET(
     url = "http://localhost:5000/processed";
   }
 
-  const response = await fetch(url + params.id); // replace url with environment variable
+  const response = await fetch(url + "/" + params.id); // replace url with environment variable
   const data = await response.json();
 
   return Response.json({ data });
