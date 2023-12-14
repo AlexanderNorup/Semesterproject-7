@@ -16,6 +16,13 @@ interface JobObject {
 }
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
+  let url: string;
+  if (process.env.NODE_ENVIRONMENT) {
+    url = "http://job-scheduler-flask:5000/job";
+  } else {
+    url = "http://localhost:5000/job";
+  }
+
   const toSend: JobObject = await request.json();
 
   const key =
@@ -32,7 +39,7 @@ export async function POST(request: Request) {
   data.append("from_date", toSend.from);
   data.append("to_date", toSend.to);
 
-  const response = await fetch("http://localhost:5000/job", {
+  const response = await fetch(url, {
     method: "POST",
     body: data,
   });

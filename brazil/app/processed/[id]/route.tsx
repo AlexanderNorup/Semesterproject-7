@@ -7,7 +7,14 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const response = await fetch("http://localhost:5000/processed/" + params.id); // replace url with environment variable
+  let url: string;
+  if (process.env.NODE_ENVIRONMENT) {
+    url = "http://job-scheduler-flask:5000/processed";
+  } else {
+    url = "http://localhost:5000/processed";
+  }
+
+  const response = await fetch(url + params.id); // replace url with environment variable
   const data = await response.json();
 
   return Response.json({ data });
