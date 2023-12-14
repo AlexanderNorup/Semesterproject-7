@@ -14,8 +14,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
-import { selectBrazilstateState } from "../lib/brazilstateSlice";
-import { useSelector } from "react-redux";
+import { todo } from "node:test";
 
 ChartJS.register(
   LinearScale,
@@ -61,10 +60,10 @@ export const options = {
 export function ChartDemo(props: any) {
   const data = props.data;
   const mongoData = props.mongoData;
+  const selectedid = props.selectId;
 
-  const brazilState = useSelector(selectBrazilstateState);
+  const brazilState = props.stateData;
   let stateToShow = brazilState;
-  //let stateToShow = props.state;
 
   if (stateToShow == undefined) {
     stateToShow = data[0].State;
@@ -85,9 +84,36 @@ export function ChartDemo(props: any) {
     .filter((x: any) => x.State == stateToShow);
 
   // Gets labels from JSON, removes duplicates and sorts in order.
-  const labels = Array.from(
-    new Set<string>(sortedData.map((x: any) => x.Year + "-" + x.Month))
-  );
+  // const labels = Array.from(
+  //   new Set<string>(sortedData.map((x: any) => x.Year + "-" + x.Month))
+  // );
+
+  const fromDate = new Date(Number.parseInt(selectedid.split("-")[0]));
+  const toDate = new Date(Number.parseInt(selectedid.split("-")[1]));
+
+  const getIdentifier = (year: number, month: number) =>
+    year + "-" + ("0" + month).slice(-2);
+
+  const labels: string[] = [];
+
+  let currentYear = fromDate.getFullYear();
+  let currentMonth = fromDate.getMonth() + 1;
+
+  const lastYear = toDate.getFullYear();
+  const lastMonth = toDate.getMonth() + 1;
+
+  while (
+    currentYear < lastYear ||
+    (currentYear == lastYear && currentMonth < lastMonth)
+  ) {
+    labels.push(getIdentifier(currentYear, currentMonth));
+
+    currentMonth++;
+    if (currentMonth > 12) {
+      currentMonth = 1;
+      currentYear++;
+    }
+  }
 
   const colors = [
     "rgb(255, 99, 132)",
@@ -180,6 +206,7 @@ export function ChartDemo(props: any) {
 
   datasets.push(...extraDatasets);
 
+  console.log(extraDatasets, datasets);
   const data2 = {
     labels,
     datasets: datasets,

@@ -18,7 +18,7 @@ interface SelectDataSetProps {
 export function SelectDataSet({ ids, setId }: SelectDataSetProps) {
   return (
     <Select onValueChange={(choice) => setId(choice)}>
-      <SelectTrigger className="w-[180px] text-black">
+      <SelectTrigger className="w-[15rem] text-black">
         <SelectValue placeholder="Choose a dataset" />
       </SelectTrigger>
       <SelectContent>

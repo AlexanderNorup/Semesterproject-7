@@ -1,18 +1,7 @@
 var mongoose = require("mongoose");
-
+var exportsModel = require("./exports_model");
 let connectionString =
   process.env.MONGO_CONNECT ?? "mongodb://admin:nielsfaurskov@localhost:27017";
-
-const brazil_exports = new mongoose.Schema({
-  Year: Number,
-  Month: Number,
-  Country: String,
-  "SH4 Code": Number,
-  State: String,
-  "SH2 Code": Number,
-  "US$ FOB": Number,
-  "Net Weight": Number,
-});
 
 interface export_object {
   Year: number;
@@ -48,10 +37,9 @@ export async function getExports(
   ) {
     return;
   }
-  const DataModel = mongoose.model("exports", brazil_exports);
   let data;
-  if (Number.isNaN(sh2code)) {
-    data = await DataModel.find({
+  if (Number.isNaN(sh2code) || sh2code == -1) {
+    data = await exportsModel.BrazilExports.find({
       Year: { $gte: fromYear, $lte: toYear },
       State: state,
     });
@@ -60,7 +48,7 @@ export async function getExports(
       return;
     }
 
-    data = await DataModel.find({
+    data = await exportsModel.BrazilExports.find({
       Year: { $gte: fromYear, $lte: toYear },
       State: state,
       "SH2 Code": sh2code,
@@ -78,7 +66,7 @@ export async function getExports(
         filteredData.push(entry);
       }
     } else if (entry.Year == toYear) {
-      if (entry.Month <= toMonth) {
+      if (entry.Month < toMonth) {
         filteredData.push(entry);
       }
     }

@@ -9,22 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAppDispatch, useAppSelector, useAppStore } from "@/lib/hooks";
-import {
-  selectBrazilstateState,
-  setBrazilstateState,
-} from "../lib/brazilstateSlice";
-import { useDispatch, useSelector } from "react-redux";
 
-const SelectState = () => {
-  const dispatch = useAppDispatch();
+interface SelectStateProps {
+  setState: (selectedState: string) => void;
+}
 
+export function SelectState({ setState }: SelectStateProps) {
   return (
-    <Select
-      defaultValue="AC"
-      onValueChange={(choice) => dispatch(setBrazilstateState(choice))}
-    >
-      <SelectTrigger className="w-[180px] text-black ">
+    <Select defaultValue="AC" onValueChange={(choice) => setState(choice)}>
+      <SelectTrigger className="w-[14rem] text-black ">
         <SelectValue placeholder="Choose a state" />
       </SelectTrigger>
       <SelectContent className="overflow-y-auto max-h-60">
@@ -60,6 +53,4 @@ const SelectState = () => {
       </SelectContent>
     </Select>
   );
-};
-
-export default SelectState;
+}
