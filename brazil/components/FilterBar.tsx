@@ -47,9 +47,6 @@ export function FilterBar({ setId }: FilterBarProps) {
             />
           </svg>
         </Button>
-        <Button className="bg-sky-400 text-black text-md hover:bg-sky-600">
-          Show data
-        </Button>
       </div>
     </div>
   );

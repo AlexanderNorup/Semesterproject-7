@@ -24,13 +24,25 @@ export function SelectDataSet({ ids, setId }: SelectDataSetProps) {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Datasets</SelectLabel>
-          {ids.map((x: any) => (
+          {ids.map((x: string) => (
             <SelectItem value={x} key={x}>
-              {x}
+              {idToDate(x)}
             </SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>
     </Select>
+  );
+}
+
+function idToDate(unix: string) {
+  const [fromUnix, toUnix] = unix.split("-");
+  const fromDate = new Date(Number.parseInt(fromUnix));
+  const toDate = new Date(Number.parseInt(toUnix));
+
+  return (
+    fromDate.toISOString().split("T")[0] +
+    " -> " +
+    toDate.toISOString().split("T")[0]
   );
 }
