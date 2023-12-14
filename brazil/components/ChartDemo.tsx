@@ -57,6 +57,13 @@ export const options = {
   },
 };
 
+// From https://stackoverflow.com/a/62765924, because Object.groupBy() isn't supported by TypeScript
+const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+  arr.reduce((groups, item) => {
+    (groups[key(item)] ||= []).push(item);
+    return groups;
+  }, {} as Record<K, T[]>);
+
 export function ChartDemo(props: any) {
   const data = props.data;
   const mongoData = props.mongoData;
@@ -150,9 +157,9 @@ export function ChartDemo(props: any) {
     });
   }
   // console.log("MONGO DATA: ", mongoData);
-  let sh2Grouped = Object.groupBy(
+  let sh2Grouped = groupBy(
     mongoData,
-    (elem: any, i: number) => elem["SH2 Code"]
+    (elem: any) => elem["SH2 Code"]
   );
 
   let extraDatasets = [];
