@@ -60,7 +60,6 @@ export const options = {
 
 export function ChartDemo(props: any) {
   const data = props.data;
-  console.log(data);
 
   const brazilState = useSelector(selectBrazilstateState);
   let stateToShow = brazilState;
