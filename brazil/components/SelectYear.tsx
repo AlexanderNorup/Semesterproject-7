@@ -10,9 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function SelectYear() {
+interface SelectYearProps {
+  handleYearSelect: (selectedYear: string) => void;
+}
+
+export function SelectYear({ handleYearSelect }: SelectYearProps) {
   return (
-    <Select>
+    <Select onValueChange={(choice) => handleYearSelect(choice)}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Choose a year" />
       </SelectTrigger>

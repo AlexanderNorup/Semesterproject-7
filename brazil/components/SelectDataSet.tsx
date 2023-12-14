@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Select,
@@ -9,20 +10,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const SelectDataSet = () => {
+interface SelectDataSetProps {
+  ids: string[];
+  setId: (id: string) => void;
+}
+
+export function SelectDataSet({ ids, setId }: SelectDataSetProps) {
   return (
-    <Select>
+    <Select onValueChange={(choice) => setId(choice)}>
       <SelectTrigger className="w-[180px] text-black">
         <SelectValue placeholder="Choose a dataset" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Datasets</SelectLabel>
-          <SelectItem value="Dataset">Dataset</SelectItem>
+          {ids.map((x: any) => (
+            <SelectItem value={x} key={x}>
+              {x}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
   );
-};
-
-export default SelectDataSet;
+}

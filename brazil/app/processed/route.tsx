@@ -4,7 +4,14 @@
 */
 export const dynamic = "force-dynamic";
 export async function GET() {
-  const response = await fetch("http://localhost:5000/processed"); // replace with environment variable
+  let url: string;
+  if (process.env.NODE_ENVIRONMENT) {
+    url = "http://job-scheduler-flask:5000/processed";
+  } else {
+    url = "http://localhost:5000/processed";
+  }
+
+  const response = await fetch(url); // replace with environment variable
   const data = await response.json();
 
   return Response.json({ data });

@@ -1,16 +1,38 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import SelectState from "./SelectState";
-import SelectDataSet from "./SelectDataSet";
+import { SelectDataSet } from "./SelectDataSet";
 import { Button } from "./ui/button";
 
-const FilterBar = () => {
+interface FilterBarProps {
+  setId: (id: string) => void;
+}
+
+export function FilterBar({ setId }: FilterBarProps) {
+  const [ids, setIds] = useState<string[]>([]);
+
+  const fetchData = async () => {
+    const response = await fetch("/processed");
+    const data = await response.json();
+    console.log(data);
+    setIds(data.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center h-full pb-7">
       <h2 className="text-2xl font-bold pb-4">Datasets</h2>
       <div className="flex flex-row items-center justify-center gap-2">
-        <SelectDataSet />
+        <SelectDataSet ids={ids} setId={setId} />
         <SelectState />
-        <Button className="bg-sky-400 text-black text-md hover:bg-sky-600">
+        <Button
+          onClick={fetchData}
+          className="bg-sky-400 text-black text-md hover:bg-sky-600"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -32,6 +54,4 @@ const FilterBar = () => {
       </div>
     </div>
   );
-};
-
-export default FilterBar;
+}
