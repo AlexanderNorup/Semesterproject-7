@@ -10,6 +10,7 @@ const SelectBar = () => {
   const [toYear, setToYear] = useState("2010");
   const [fromMonth, setFromMonth] = useState("01");
   const [toMonth, setToMonth] = useState("01");
+  const [sentRequest, setSentRequest] = useState(false);
 
   const handleNewJob = async () => {
     const response = await fetch("/job", {
@@ -20,23 +21,33 @@ const SelectBar = () => {
       }),
     });
     const status = await response.json();
-    console.log(status);
+    if (status.status == "success") {
+      setSentRequest(true);
+    } else {
+      alert("Error starting job!");
+    }
   };
 
   return (
-    <div className="grid grid-flow-col gap-2 items-center justify-center w-full mx-3">
-      <h2 className="text-white text-lg">From</h2>
-      <SelectMonth handlerMonthSelect={setFromMonth} />
-      <SelectYear handleYearSelect={setFromYear} />
-      <h2 className="text-white text-lg ">To</h2>
-      <SelectMonth handlerMonthSelect={setToMonth} />
-      <SelectYear handleYearSelect={setToYear} />
-      <Button
-        onClick={handleNewJob}
-        className="bg-sky-400 text-black text-md hover:bg-sky-600"
-      >
-        Create Job
-      </Button>
+    <div>
+      {sentRequest ? (
+        <p className="text-center text-white">Request has been sent!</p>
+      ) : (
+        <div className="grid grid-flow-col gap-2 items-center justify-center w-full mx-3">
+          <h2 className="text-white text-lg">From</h2>
+          <SelectMonth handlerMonthSelect={setFromMonth} />
+          <SelectYear handleYearSelect={setFromYear} />
+          <h2 className="text-white text-lg ">To</h2>
+          <SelectMonth handlerMonthSelect={setToMonth} />
+          <SelectYear handleYearSelect={setToYear} />
+          <Button
+            onClick={handleNewJob}
+            className="bg-sky-400 text-black text-md hover:bg-sky-600"
+          >
+            Create Job
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

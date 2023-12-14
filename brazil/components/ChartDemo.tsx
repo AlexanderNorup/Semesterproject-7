@@ -14,8 +14,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
-import { selectBrazilstateState } from "../lib/brazilstateSlice";
-import { useSelector } from "react-redux";
+import { todo } from "node:test";
 
 ChartJS.register(
   LinearScale,
@@ -58,12 +57,20 @@ export const options = {
   },
 };
 
+// From https://stackoverflow.com/a/62765924, because Object.groupBy() isn't supported by TypeScript
+const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+  arr.reduce((groups, item) => {
+    (groups[key(item)] ||= []).push(item);
+    return groups;
+  }, {} as Record<K, T[]>);
+
 export function ChartDemo(props: any) {
   const data = props.data;
+  const mongoData = props.mongoData;
+  const selectedid = props.selectId;
 
-  const brazilState = useSelector(selectBrazilstateState);
+  const brazilState = props.stateData;
   let stateToShow = brazilState;
-  //let stateToShow = props.state;
 
   if (stateToShow == undefined) {
     stateToShow = data[0].State;
@@ -84,9 +91,36 @@ export function ChartDemo(props: any) {
     .filter((x: any) => x.State == stateToShow);
 
   // Gets labels from JSON, removes duplicates and sorts in order.
-  const labels = Array.from(
-    new Set<string>(sortedData.map((x: any) => x.Year + "-" + x.Month))
-  );
+  // const labels = Array.from(
+  //   new Set<string>(sortedData.map((x: any) => x.Year + "-" + x.Month))
+  // );
+
+  const fromDate = new Date(Number.parseInt(selectedid.split("-")[0]));
+  const toDate = new Date(Number.parseInt(selectedid.split("-")[1]));
+
+  const getIdentifier = (year: number, month: number) =>
+    year + "-" + ("0" + month).slice(-2);
+
+  const labels: string[] = [];
+
+  let currentYear = fromDate.getFullYear();
+  let currentMonth = fromDate.getMonth() + 1;
+
+  const lastYear = toDate.getFullYear();
+  const lastMonth = toDate.getMonth() + 1;
+
+  while (
+    currentYear < lastYear ||
+    (currentYear == lastYear && currentMonth < lastMonth)
+  ) {
+    labels.push(getIdentifier(currentYear, currentMonth));
+
+    currentMonth++;
+    if (currentMonth > 12) {
+      currentMonth = 1;
+      currentYear++;
+    }
+  }
 
   const colors = [
     "rgb(255, 99, 132)",
@@ -122,25 +156,33 @@ export function ChartDemo(props: any) {
       yAxisID: "y1",
     });
   }
+  let sh2Grouped = groupBy(mongoData, (elem: any) => elem["SH2 Code"]);
 
-  const extraDatasets = [
-    {
+  let extraDatasets = [];
+  for (const [sh2code, arr] of Object.entries(sh2Grouped)) {
+    extraDatasets.push({
       type: "bar" as const,
-      label: "Income -> left axis",
-      backgroundColor: "rgb(75, 192, 192)",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      label: "SH2 Code: " + sh2code,
+      backgroundColor: faker.color.rgb(),
+      data: labels.map((x: string) => {
+        let matching: any[] = arr.filter(
+          (y: any) => x == y.Year.toString() + "-" + ("0" + y.Month).slice(-2)
+        );
+        let initialValue = 0;
+        let totalIncome = matching
+          .map((match: any) => match["US$ FOB"])
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue,
+            initialValue
+          );
+
+        return totalIncome;
+      }),
       borderColor: "white",
       borderWidth: 2,
       yAxisID: "y",
-    },
-    {
-      type: "bar" as const,
-      label: "Product -> left axis",
-      backgroundColor: "rgb(53, 162, 235)",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      yAxisID: "y",
-    },
-  ];
+    });
+  }
 
   datasets.push(...extraDatasets);
 

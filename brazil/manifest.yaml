@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dashboard
-          image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v2
+          image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v5
           imagePullPolicy: "Always"
           env:
             - name: PORT

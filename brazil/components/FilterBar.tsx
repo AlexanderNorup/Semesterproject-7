@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import SelectState from "./SelectState";
+import { SelectState } from "./SelectState";
 import { SelectDataSet } from "./SelectDataSet";
 import { Button } from "./ui/button";
+import { SelectSH2 } from "./SelectSH2";
 
 interface FilterBarProps {
   setId: (id: string) => void;
+  setState: (id: string) => void;
+  setSH2: (id: string) => void;
 }
 
-export function FilterBar({ setId }: FilterBarProps) {
+export function FilterBar({ setId, setState, setSH2 }: FilterBarProps) {
   const [ids, setIds] = useState<string[]>([]);
 
   const fetchData = async () => {
@@ -27,7 +30,8 @@ export function FilterBar({ setId }: FilterBarProps) {
       <h2 className="text-2xl font-bold pb-4">Datasets</h2>
       <div className="flex flex-row items-center justify-center gap-2">
         <SelectDataSet ids={ids} setId={setId} />
-        <SelectState />
+        <SelectState setState={setState} />
+        <SelectSH2 setSH2={setSH2} />
         <Button
           onClick={fetchData}
           className="bg-sky-400 text-black text-md hover:bg-sky-600"
