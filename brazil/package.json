@@ -24,6 +24,7 @@
     "date-fns": "^2.30.0",
     "faker": "^6.6.6",
     "lucide-react": "^0.292.0",
+    "mongoose": "^8.0.3",
     "next": "14.0.1",
     "next-redux-wrapper": "^8.1.0",
     "react": "^18",
