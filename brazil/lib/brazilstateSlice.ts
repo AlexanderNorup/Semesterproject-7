@@ -6,7 +6,7 @@ import { HYDRATE } from "next-redux-wrapper";
 export const brazilstateSlice = createSlice({
   name: "brazilstate",
   initialState: {
-    value: "ok",
+    value: "AC",
   },
   reducers: {
     setBrazilstateState: (state, action) => {

@@ -20,7 +20,10 @@ const SelectState = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <Select onValueChange={(choice) => dispatch(setBrazilstateState(choice))}>
+    <Select
+      defaultValue="AC"
+      onValueChange={(choice) => dispatch(setBrazilstateState(choice))}
+    >
       <SelectTrigger className="w-[180px] text-black ">
         <SelectValue placeholder="Choose a state" />
       </SelectTrigger>
