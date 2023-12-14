@@ -2,8 +2,7 @@ import { url } from "inspector";
 import { getExports } from "./mongolib";
 
 /* Access with e.g.:
-  const response = await fetch("/processed/" + "1266210000000-1268186400000");
-  const data = await response.json();
+  const response = await fetch("mongodb?fromYear=2010&fromMonth=1&toYear=2010&toMonth=12&state=AC");
 */
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -11,8 +10,6 @@ export async function GET(request: Request) {
   if (params == null) {
     return;
   }
-
-  console.log(params);
 
   const response = await getExports(
     Number.parseInt(params.searchParams.get("fromYear") ?? ""),

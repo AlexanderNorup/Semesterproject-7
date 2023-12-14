@@ -3,8 +3,6 @@ var mongoose = require("mongoose");
 let connectionString =
   process.env.MONGO_CONNECT ?? "mongodb://admin:nielsfaurskov@localhost:27017";
 
-console.log(connectionString);
-
 const brazil_exports = new mongoose.Schema({
   Year: Number,
   Month: Number,
