@@ -24,9 +24,8 @@ const SelectBar = () => {
     if (status.status == "success") {
       setSentRequest(true);
     } else {
-      alert("It did not work :(");
+      alert("Error starting job!");
     }
-    console.log(status);
   };
 
   return (

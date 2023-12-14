@@ -156,11 +156,7 @@ export function ChartDemo(props: any) {
       yAxisID: "y1",
     });
   }
-  // console.log("MONGO DATA: ", mongoData);
-  let sh2Grouped = groupBy(
-    mongoData,
-    (elem: any) => elem["SH2 Code"]
-  );
+  let sh2Grouped = groupBy(mongoData, (elem: any) => elem["SH2 Code"]);
 
   let extraDatasets = [];
   for (const [sh2code, arr] of Object.entries(sh2Grouped)) {
@@ -180,10 +176,6 @@ export function ChartDemo(props: any) {
             initialValue
           );
 
-        // if (matching && matching.length > 0 && matching[0]["SH2 Code"] === 23) {
-        //   console.log(x, "matching: ", matching, "total", totalIncome);
-        // }
-
         return totalIncome;
       }),
       borderColor: "white",
@@ -192,28 +184,8 @@ export function ChartDemo(props: any) {
     });
   }
 
-  // const extraDatasets = [
-  //   {
-  //     type: "bar" as const,
-  //     label: "Income -> left axis",
-  //     backgroundColor: "rgb(75, 192, 192)",
-  //     data: labels.map((x: string) => mongoData),
-  //     borderColor: "white",
-  //     borderWidth: 2,
-  //     yAxisID: "y",
-  //   },
-  //   {
-  //     type: "bar" as const,
-  //     label: "Product -> left axis",
-  //     backgroundColor: "rgb(53, 162, 235)",
-  //     data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-  //     yAxisID: "y",
-  //   },
-  // ];
-
   datasets.push(...extraDatasets);
 
-  console.log(extraDatasets, datasets);
   const data2 = {
     labels,
     datasets: datasets,
