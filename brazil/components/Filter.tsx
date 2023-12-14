@@ -1,12 +1,14 @@
-// import React from "react";
-// import FilterBar from "./FilterBar";
+import React from "react";
+import { FilterBar } from "./FilterBar";
 
-// const Filter = () => {
-//   return (
-//     <div>
-//       <FilterBar />
-//     </div>
-//   );
-// };
+interface FilterProps {
+  setId: (id: string) => void;
+}
 
-// export default Filter;
+export function Filter({ setId }: FilterProps) {
+  return (
+    <div>
+      <FilterBar setId={setId} />
+    </div>
+  );
+}

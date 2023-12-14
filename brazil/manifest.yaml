@@ -17,13 +17,18 @@ spec:
     spec:
       containers:
         - name: dashboard
-          image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v1
+          image: registry.gitlab.sdu.dk/alnoe20/docker-images/dashboard:v2
           imagePullPolicy: "Always"
           env:
             - name: PORT
               value: "3000"
             - name: NODE_ENVIRONMENT
               value: "PRODUCTION"
+            - name: MONGO_CONNECT
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-auth
+                  key: connectionstring
 ---
 apiVersion: "v1"
 kind: "Service"
